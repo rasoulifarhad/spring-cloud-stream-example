@@ -1,0 +1,30 @@
+logging:
+  level:
+    org:
+      springframework:
+        amqp: debug
+
+spring:
+  rabbitmq:
+    addresses: localhost:5672
+
+  cloud:
+    function:
+      definition: nameToPerson;log;nameSupplier
+    stream:
+      bindings:
+        nameSupplier-out-0:
+          destination: name.to.person.topic
+        nameToPerson-in-0:
+          group: name-to-person-consumer
+          destination: name.to.person.topic
+        nameToPerson-out-0:
+          destination: log.topic
+        log-in-0:
+          group: logging-consumer
+          destination: log.topic
+      binders:
+        rabbit:
+          environment:
+            consumer:
+              auto-bind-dlq: true   
